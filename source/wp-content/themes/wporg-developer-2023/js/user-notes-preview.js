@@ -25,7 +25,7 @@
 		document.querySelector('#commentform .tablist').style.display = 'flex';
 	
 		if (textarea && preview && tabs.length > 0) {
-			// Append spinner to preview tab
+			// Append spinner to preview tab.
 			tabs[tabs.length - 1].parentNode.appendChild(spinner);
 	
 			previewContent = preview.querySelector('.preview-content');
@@ -42,7 +42,7 @@
 
 	function previewEvents() {
 		const commentFormComment = document.getElementById('comment-form-comment');
-		const tabContentHeight = commentFormComment.offsetHeight; // outerHeight equivalent in vanilla JS
+		const tabContentHeight = commentFormComment.offsetHeight;
 		tabs.forEach(tab => {
 			tab.addEventListener('keydown', handlePreviewEvent);
 			tab.addEventListener('click', handlePreviewEvent);
@@ -79,42 +79,41 @@
 			}
 		}
 	}
+async function updatePreview(content) {
+    try {
+        spinner.style.display = ''; // Show spinner.
+        processing = true;
 
-	function updatePreview(content) {
-		// Don't update preview if nothing changed
-		if (text === content) {
-			spinner.style.display = 'none'; // Hide spinner
-			return;
-		}
-	
-		spinner.style.display = ''; // Show spinner
-		text = content;
-		processing = true;
-	
-		fetch(wporg_note_preview.ajaxurl, {
+		const params = new URLSearchParams();
+		params.append('action', 'preview_comment');
+		params.append('preview_nonce', wporg_note_preview.nonce);
+		params.append('preview_comment', content);
+		const response = await fetch(wporg_note_preview.ajaxurl, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded',
 			},
-			body: `action=preview_comment&preview_nonce=${wporg_note_preview.nonce}&preview_comment=${encodeURIComponent(content)}`
-		})
-		.then(response => response.json())
-		.then(response => {
-			updatePreview_HTML(response.data.comment);
-		})
-		.catch(error => {
-			console.error('Error:', error);
-		})
-		.finally(() => {
-			spinner.style.display = 'none'; // Hide spinner
-			processing = false;
-	
-			// Make first child of the preview focusable
-			if (preview.firstChild) {
-				preview.firstChild.setAttribute('tabindex', '0');
-			}
+			body: params
 		});
-	}
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        updatePreview_HTML(data.data.comment);
+    } catch (error) {
+        console.error('Error:', error);
+    } finally {
+        spinner.style.display = 'none'; // Hide spinner.
+        processing = false;
+
+        // Make first child of the preview focusable.
+        if (preview.firstChild) {
+            preview.firstChild.setAttribute('tabindex', '0');
+        }
+    }
+}
 
 	function updatePreview_HTML(content) {
 		// Update preview content
