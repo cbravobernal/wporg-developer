@@ -1,32 +1,42 @@
 /**
  * Dynamic functionality for voting on user submitted notes.
  *
+ * @param {Object} wp The WordPress JavaScript object.
  */
 
-( function( $, wp ) {
-	$( '#comments' ).on( 'click', 'a.user-note-voting-up, a.user-note-voting-down', function( event ) {
-		event.preventDefault();
-
-		var $item = $( this ),
-			comment = $item.closest( '.comment' );
-
-		$.post(
-			wporg_note_voting.ajaxurl,
-			{
-				action:   'note_vote',
-				comment:  $item.attr( 'data-id' ),
-				vote:     $item.attr( 'data-vote' ),
-				_wpnonce: $item.parent().attr( 'data-nonce' )
-			},
-			function( data ) {
-				if ( '0' !== data ) {
-					$item.closest( '.user-note-voting' ).replaceWith( data );
-					wp.a11y.speak( $( '.user-note-voting-count', comment ).text() );
+( function ( wp ) {
+	document.addEventListener( 'DOMContentLoaded', function () {
+		document.querySelectorAll( 'a[data-vote]' ).forEach( ( element ) => {
+			element.addEventListener( 'click', function ( event ) {
+				// Bail if the AJAX URL is not defined.
+				if ( typeof wporg_note_voting === 'undefined' ) {
+					return;
 				}
-			},
-			'text'
-		);
+				const target = event.target;
+				event.preventDefault();
+				const comment = target.closest( '.comment' );
 
-		return false;
+				const params = new URLSearchParams();
+				params.append( 'action', 'note_vote' );
+				params.append( 'comment', target.getAttribute( 'data-id' ) );
+				params.append( 'vote', target.getAttribute( 'data-vote' ) );
+				params.append( '_wpnonce', target.parentNode.getAttribute( 'data-nonce' ) );
+
+				fetch( wporg_note_voting.ajaxurl, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded',
+					},
+					body: params,
+				} )
+					.then( ( response ) => response.text() )
+					.then( ( data ) => {
+						if ( '0' !== data ) {
+							target.closest( '.user-note-voting' ).outerHTML = data;
+							wp.a11y.speak( comment.querySelector( '.user-note-voting-count' ).textContent );
+						}
+					} );
+			} );
+		} );
 	} );
-} )( window.jQuery, window.wp );
+} )( window.wp );
