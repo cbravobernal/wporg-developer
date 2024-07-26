@@ -1,10 +1,10 @@
 /**
  * Dynamic functionality for voting on user submitted notes.
  *
- * @param {Object} windowWP The WordPress JavaScript object.
+ * @param {Object} wp The WordPress JavaScript object.
  */
 
-( function ( windowWP ) {
+( function ( wp ) {
 	document.addEventListener( 'DOMContentLoaded', function () {
 		document.querySelector( '.comment-list' ).addEventListener( 'click', function ( event ) {
 			if ( event.target.matches( 'a.user-note-voting-up, a.user-note-voting-down' ) ) {
@@ -30,7 +30,7 @@
 					.then( ( data ) => {
 						if ( data !== '0' ) {
 							item.closest( '.user-note-voting' ).outerHTML = data;
-							windowWP.a11y.speak( comment.querySelector( '.user-note-voting-count' ).textContent );
+							wp.a11y.speak( comment.querySelector( '.user-note-voting-count' ).textContent );
 						}
 					} );
 
