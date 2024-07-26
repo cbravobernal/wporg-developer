@@ -107,8 +107,8 @@
 			processing = false;
 
 			// Make first child of the preview focusable.
-			if ( preview.firstChild ) {
-				preview.firstChild.setAttribute( 'tabindex', '0' );
+			if ( preview.firstElementChild ) {
+				preview.firstElementChild.setAttribute( 'tabindex', '0' );
 			}
 		}
 	}
