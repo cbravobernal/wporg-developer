@@ -35,10 +35,10 @@ class DevHub_Note_Preview {
 	 */
 	public static function scripts_and_styles() {
 		if ( is_singular() ) {
-			wp_enqueue_script(
+			wp_enqueue_script_module(
 				'wporg-developer-tabs',
 				get_stylesheet_directory_uri() . '/js/tabs.js',
-				array( 'jquery' ),
+				array( '@wordpress/interactivity' ),
 				filemtime( dirname( __DIR__ ) . '/js/tabs.js' ),
 				true
 			);
@@ -98,7 +98,7 @@ class DevHub_Note_Preview {
 
 		ob_start();
 		?>
-		<div id='comment-preview' class='tab-section comment byuser depth-1 comment-preview' aria-hidden="true">
+		<div id='comment-preview' data-wp-interactive='wporg-developer/tabs' class='tab-section comment byuser depth-1 comment-preview' data-wp-bind--aria-hidden='!state.sectionActive' data-wp-class--tab-section-selected='state.sectionActive'>
 			<article class='preview-body comment-body'>
 				<div class='preview-content comment-content'></div>
 			</article>

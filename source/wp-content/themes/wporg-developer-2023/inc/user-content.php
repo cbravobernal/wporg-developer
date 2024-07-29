@@ -1,3 +1,6 @@
+Deprecated: Creation of dynamic property P2P_Autoload::$prefix is deprecated in /Users/carlos/repos/wporg-developer/vendor/scribu/lib-posts-to-posts/autoload.php on line 6
+
+Deprecated: Creation of dynamic property P2P_Autoload::$basedir is deprecated in /Users/carlos/repos/wporg-developer/vendor/scribu/lib-posts-to-posts/autoload.php on line 7
 <?php
 /**
  * Code Reference user submitted content (comments, notes, etc).
@@ -291,17 +294,17 @@ class DevHub_User_Submitted_Content {
 
 		// wp_kses() converts htmlspecialchars in source code.
 		$content = $content ? htmlspecialchars_decode( $content ) : '';
-
+		wp_interactivity_state('wporg-developer/tabs', array('tabSelected' => '#comment-form-comment'));
 		ob_start();
 
 		if ( class_exists( 'DevHub_Note_Preview' ) ) {
-			echo "<ul class='tablist' style='display: none;'>";
-			echo '<li><a href="#comment-form-comment">' . __( 'Write', 'wporg' ) . '</a></li>';
-			echo '<li><a href="#comment-preview">' . __( 'Preview', 'wporg' ) . '</a></li></ul>';
+			echo "<ul class='tablist' data-wp-interactive='wporg-developer/tabs'>";
+			echo '<li><a data-wp-on--click="actions.tabClick" data-wp-bind--tab-index="state.tabIndex" data-wp-bind--aria-selected="state.tabActive" href="#comment-form-comment" aria-controls="comment-form-comment" role="tab">' . __( 'Write', 'wporg' ) . '</a></li>';
+			echo '<li><a data-wp-on--click="actions.tabClick" data-wp-bind--tab-index="state.tabIndex" data-wp-bind--aria-selected="state.tabActive" href="#comment-preview" aria-controls="comment-preview" role="tab">' . __( 'Preview', 'wporg' ) . '</a></li></ul>';
 			echo '<label class="screen-reader-text" for="comment">' . esc_html__( 'Note', 'wporg' ) . '</label>';
 		}
 
-		echo '<div class="comment-form-comment tab-section" id="comment-form-comment">';
+		echo '<div data-wp-interactive="wporg-developer/tabs" class="comment-form-comment tab-section" data-wp-class--tab-section-selected="state.sectionActive" data-wp-bind--aria-hidden="!state.sectionActive" id="comment-form-comment" role="tabpanel">';
 		wp_editor( $content, 'comment', array(
 				'media_buttons' => false,
 				'textarea_name' => 'comment',
@@ -378,7 +381,7 @@ class DevHub_User_Submitted_Content {
 		}
 
 		ob_start();
-		echo "<div id='feedback-editor-{$comment_id}' class='feedback-editor{$class}'{$display}>\n";
+		echo "<div id='feedback-editor-{$comment_id}' tab-index='0' class='feedback-editor{$class}'{$display}>\n";
 		echo "<form id='feedback-form-{$instance}{$form_type}' class='feedback-form' method='post' action='{$action}' name='feedback-form-{$instance}'>\n";
 		printf(
 			"<label class='screen-reader-text' for='feedback-comment-%s'>%s</label>",
