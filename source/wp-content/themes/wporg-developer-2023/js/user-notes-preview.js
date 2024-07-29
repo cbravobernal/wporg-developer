@@ -79,7 +79,7 @@
 	}
 	async function updatePreview( content ) {
 		try {
-			spinner.style.display = ''; // Show spinner.
+			spinner.style.display = 'inline-block'; // Show spinner.
 			processing = true;
 
 			const params = new URLSearchParams();
